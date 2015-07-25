@@ -27,7 +27,13 @@ public class FormularioHelper {
         this.endereco = (EditText) activity.findViewById(R.id.form_endereco);
 
     }
-
+    public void populaInfoAluno(Aluno aluno){
+        this.nome.setText(aluno.getNome().toString());
+        this.telefone.setText(aluno.getNome().toString());
+        this.site.setText(aluno.getSite().toString());
+        this.nota.setRating(aluno.getNota().floatValue());
+        this.endereco.setText(aluno.getEndereco().toString());
+    }
     public Aluno pegaAlunoDoFormulario(){
         aluno.setNome(nome.getText().toString());
         aluno.setEndereco(endereco.getText().toString());

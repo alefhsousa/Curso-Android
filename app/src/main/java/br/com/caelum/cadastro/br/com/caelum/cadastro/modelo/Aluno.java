@@ -1,9 +1,11 @@
 package br.com.caelum.cadastro.br.com.caelum.cadastro.modelo;
 
+import java.io.Serializable;
+
 /**
  * Created by alefh on 7/23/15.
  */
-public class Aluno {
+public class Aluno  implements Serializable{
     private String nome;
     private String telefone;
     private String endereco;

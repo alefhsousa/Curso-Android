@@ -1,4 +1,5 @@
 package br.com.caelum.cadastro;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -17,13 +18,19 @@ public class FormularioActivity extends ActionBarActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.i("[INFO]", "Executando o metodo onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_formulario);
-        Log.i("[INFO]", "Executando o metodo onCreate");
-
         Button botaoSalvar = (Button) findViewById(R.id.form_botao);
-
         this.helper = new FormularioHelper(this);
+        Intent intentAnterior =  this.getIntent();
+        Aluno aluno = null;
+        aluno = (Aluno) intentAnterior.getSerializableExtra(ListaAlunosActivity.ALUNO_SELECIONADO);
+
+        if(aluno != null){
+            this.helper.populaInfoAluno(aluno);
+        }
+
 
         botaoSalvar.setOnClickListener(new View.OnClickListener() {
             @Override

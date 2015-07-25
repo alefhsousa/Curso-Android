@@ -25,6 +25,9 @@ import br.com.caelum.cadastro.br.com.caelum.cadastro.modelo.Aluno;
  */
 public class ListaAlunosActivity extends Activity {
     private   ListView listaAlunos;
+
+    public  static  final String ALUNO_SELECIONADO = "alunoSelecionado";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,12 +40,18 @@ public class ListaAlunosActivity extends Activity {
 
         this.listaAlunos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(ListaAlunosActivity.this,"Posicao Selecionada: " + position, Toast.LENGTH_SHORT).show();
+            public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+                Intent editarAluno = new Intent(ListaAlunosActivity.this,FormularioActivity.class);
+                Aluno alunoSelecionado =  (Aluno) adapter.getItemAtPosition(position);
+
+                editarAluno.putExtra(ALUNO_SELECIONADO,alunoSelecionado);
+
+                ListaAlunosActivity.this.startActivity(editarAluno);
             }
         });
 
-        this.listaAlunos.setOnItemLongClickListener(
+
+       /* this.listaAlunos.setOnItemLongClickListener(
                 new AdapterView.OnItemLongClickListener() {
                     @Override
                     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -51,16 +60,16 @@ public class ListaAlunosActivity extends Activity {
                         return false;
                     }
                 }
-        );
+        );*/
 
-        botaoAdiciona.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Toast.makeText(ListaAlunosActivity.this, "Floating button clicado", Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(ListaAlunosActivity.this,FormularioActivity.class);
-                startActivity(intent);
-            }
-        });
+                botaoAdiciona.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //Toast.makeText(ListaAlunosActivity.this, "Floating button clicado", Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(ListaAlunosActivity.this, FormularioActivity.class);
+                        startActivity(intent);
+                    }
+                });
     }
 
     @Override
@@ -83,6 +92,8 @@ public class ListaAlunosActivity extends Activity {
         final ArrayAdapter<Aluno> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, alunos);
         this.listaAlunos.setAdapter(adapter);
     }
+
+
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
