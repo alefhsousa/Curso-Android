@@ -2,8 +2,10 @@ package br.com.caelum.cadastro;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Notification;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -17,6 +19,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import br.com.caelum.cadastro.br.com.caelum.cadastro.adapter.ListaAlunosAdapter;
 import br.com.caelum.cadastro.br.com.caelum.cadastro.dao.AlunoDAO;
 import br.com.caelum.cadastro.br.com.caelum.cadastro.modelo.Aluno;
 
@@ -26,7 +29,7 @@ import br.com.caelum.cadastro.br.com.caelum.cadastro.modelo.Aluno;
 public class ListaAlunosActivity extends Activity {
     private   ListView listaAlunos;
 
-    public  static  final String ALUNO_SELECIONADO = "alunoSelecionado";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +47,7 @@ public class ListaAlunosActivity extends Activity {
                 Intent editarAluno = new Intent(ListaAlunosActivity.this,FormularioActivity.class);
                 Aluno alunoSelecionado =  (Aluno) adapter.getItemAtPosition(position);
 
-                editarAluno.putExtra(ALUNO_SELECIONADO,alunoSelecionado);
+                editarAluno.putExtra(FormularioActivity.ALUNO_SELECIONADO,alunoSelecionado);
 
                 ListaAlunosActivity.this.startActivity(editarAluno);
             }
@@ -89,7 +92,7 @@ public class ListaAlunosActivity extends Activity {
         alunos = dao.getListaAlunos();
         dao.close();
 
-        final ArrayAdapter<Aluno> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, alunos);
+        final ListaAlunosAdapter adapter = new ListaAlunosAdapter(this, alunos);
         this.listaAlunos.setAdapter(adapter);
     }
 
@@ -101,15 +104,43 @@ public class ListaAlunosActivity extends Activity {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         final Aluno alunoSelecionado = (Aluno) listaAlunos.getAdapter().getItem(info.position);
 
-        menu.add("Ligar");
-
+        MenuItem ligar = menu.add("Ligar");
+        MenuItem sms = menu.add("Enviar SMS");
+        MenuItem mapa = menu.add("Achar no Mapa");
+        MenuItem site = menu.add("Navegar no site");
         MenuItem deletar = menu.add("Deletar");
+
+        Intent intentLigar = new Intent(Intent.ACTION_DIAL);
+        intentLigar.setData(Uri.parse("tel:" + alunoSelecionado.getTelefone()));
+        ligar.setIntent(intentLigar);
+
+        Intent intentSMS =  new Intent(Intent.ACTION_VIEW);
+        intentSMS.setData(Uri.parse("sms:" + alunoSelecionado.getTelefone()));
+        intentSMS.putExtra("sms_body", "Olá, tudo bem?");
+        sms.setIntent(intentSMS);
+
+        Intent intentMapa = new Intent(Intent.ACTION_VIEW);
+        intentMapa.setData(Uri.parse("geo:0,0?z=14&q="+alunoSelecionado.getEndereco()));
+        mapa.setIntent(intentMapa);
+
+        Intent intentSite = new Intent(Intent.ACTION_VIEW);
+        String sites = alunoSelecionado.getSite();
+        //sites = "google.com";
+        Log.i("[SITES]", sites);
+        if( !sites.startsWith("http://")){
+            sites = "http://" + sites;
+            Log.i("[SITES]", sites);
+        }
+
+        intentSite.setData(Uri.parse(sites));
+        site.setIntent(intentSite);
+
 
         deletar.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 Log.i("[INFO]", "## cliquei onMenuItemClick " + alunoSelecionado.getNome());
-               new AlertDialog.Builder(ListaAlunosActivity.this)
+                new AlertDialog.Builder(ListaAlunosActivity.this)
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle("Deletar")
                         .setMessage("Realmente deseja deletar?")
@@ -120,9 +151,9 @@ public class ListaAlunosActivity extends Activity {
                                         AlunoDAO dao = new AlunoDAO(ListaAlunosActivity.this);
                                         dao.delete(alunoSelecionado);
                                         dao.close();
-                                         ListaAlunosActivity.this.carregarListaDeAlunos();
+                                        ListaAlunosActivity.this.carregarListaDeAlunos();
                                     }
-                                }).setNegativeButton("Não",null).show();
+                                }).setNegativeButton("Não", null).show();
 
                 return false;
             }

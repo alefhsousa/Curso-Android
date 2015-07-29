@@ -17,7 +17,7 @@ import br.com.caelum.cadastro.br.com.caelum.cadastro.modelo.Aluno;
  */
 public class AlunoDAO extends SQLiteOpenHelper {
     
-    private static final int VERSAO = 1;
+    private static final int VERSAO = 2;
     private static final String TABELA = "Alunos";
     private static final String DATABASE = "CadastroCaelum";
 
@@ -36,6 +36,7 @@ public class AlunoDAO extends SQLiteOpenHelper {
                 +   " telefone TEXT, "
                 +   " endereco TEXT, "
                 +   " site TEXT, "
+                +   " caminhoFoto TEXT, "
                 +   " nota REAL);";
 
         db.execSQL(ddl);
@@ -45,22 +46,16 @@ public class AlunoDAO extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        String sql = " DROP TABLE IF EXISTIS " + TABELA;
+        Log.i("[BANCO", "EXECUTEI O UPDATE");
+        String sql = " ALTER TABLE " + TABELA + " ADD COLUMN  caminhoFoto TEXT;";
         db.execSQL(sql);
-        onCreate(db);
+
     }
 
     public void insere(Aluno aluno){
         Log.i("[INFO]", "INICIANDO INSERCAO");
-        ContentValues values = new ContentValues();
 
-        values.put("nome",aluno.getNome());
-        values.put("telefone",aluno.getTelefone());
-        values.put("endereco",aluno.getEndereco());
-        values.put("site", aluno.getSite());
-        values.put("nota", aluno.getNota());
-
-        this.getWritableDatabase().insert(TABELA, null, values);
+        this.getWritableDatabase().insert(TABELA, null, preencherContentValues(aluno));
 
         Log.i("[INFO]", "FINALIZANDO INSERCAO");
 
@@ -79,7 +74,7 @@ public class AlunoDAO extends SQLiteOpenHelper {
         int idEndereco = c.getColumnIndex("endereco");
         int idSite = c.getColumnIndex("site");
         int idNota = c.getColumnIndex("nota");
-
+        int idFotoPerfil = c.getColumnIndex("caminhoFoto");
         while (c.moveToNext()){
             Aluno aluno = new Aluno();
 
@@ -89,7 +84,7 @@ public class AlunoDAO extends SQLiteOpenHelper {
             aluno.setEndereco(c.getString(idEndereco));
             aluno.setSite(c.getString(idSite));
             aluno.setNota(c.getDouble(idNota));
-
+            aluno.setCaminhoFoto(c.getString(idFotoPerfil));
             alunos.add(aluno);
         }
 
@@ -100,7 +95,26 @@ public class AlunoDAO extends SQLiteOpenHelper {
     public void delete(Aluno aluno){
 
         String[] args = {aluno.getId().toString()};
-        this.getWritableDatabase().delete(TABELA, "id=?",args);
+        this.getWritableDatabase().delete(TABELA, "id=?", args);
+    }
+
+    public void alterar(Aluno aluno){
+        Log.i("[INFO]", "INICIO  UPDATE");
+        String[] idParaSerAlterado = { aluno.getId().toString() };
+        this.getWritableDatabase().update(TABELA,preencherContentValues(aluno), "id=?", idParaSerAlterado);
+        Log.i("[INFO]", "FIM  UPDATE");
+    }
+
+    private ContentValues preencherContentValues(Aluno aluno) {
+        ContentValues values = new ContentValues();
+        values.put("nome",aluno.getNome());
+        values.put("telefone",aluno.getTelefone());
+        values.put("endereco",aluno.getEndereco());
+        values.put("site", aluno.getSite());
+        values.put("nota", aluno.getNota());
+        values.put("caminhoFoto", aluno.getCaminhoFoto());
+
+        return values;
     }
 
 }
