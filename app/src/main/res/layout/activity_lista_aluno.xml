@@ -20,7 +20,8 @@
         android:background="@drawable/fundo"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="56dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
         android:paddingBottom="16dp"
         android:id="@+id/lista_alunos_floating_button"
         />

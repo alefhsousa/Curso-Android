@@ -7,8 +7,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,13 +22,15 @@ import android.widget.Toast;
 import java.util.List;
 
 import br.com.caelum.cadastro.br.com.caelum.cadastro.adapter.ListaAlunosAdapter;
+import br.com.caelum.cadastro.br.com.caelum.cadastro.converter.AlunoConverter;
 import br.com.caelum.cadastro.br.com.caelum.cadastro.dao.AlunoDAO;
 import br.com.caelum.cadastro.br.com.caelum.cadastro.modelo.Aluno;
+import br.com.caelum.cadastro.br.com.caelum.cadastro.support.WebClient;
 
 /**
  * Created by alefh on 7/21/15.
  */
-public class ListaAlunosActivity extends Activity {
+public class ListaAlunosActivity extends ActionBarActivity {
     private   ListView listaAlunos;
 
 
@@ -73,6 +77,30 @@ public class ListaAlunosActivity extends Activity {
                         startActivity(intent);
                     }
                 });
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+
+            case R.id.menu_enviar_notas:
+                new EnviaAlunoTask(this).execute();
+                return true;
+
+            case R.id.menu_receber_provas:
+                Intent provas = new Intent(this,ProvasActivity.class);
+                startActivity(provas);
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        this.getMenuInflater().inflate(R.menu.menu_lista_alunos, menu);
+        return true;
     }
 
     @Override

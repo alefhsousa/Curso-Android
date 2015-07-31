@@ -117,4 +117,19 @@ public class AlunoDAO extends SQLiteOpenHelper {
         return values;
     }
 
+    public boolean isAluno(String numeroDeTelefone) {
+
+        String[] parametros = {numeroDeTelefone};
+
+        Cursor rawQuery = getReadableDatabase()
+                        .rawQuery("Select telefone FROM " + TABELA
+                        + " WHERE telefone = ?",parametros);
+
+        int total = rawQuery.getCount();
+
+        rawQuery.close();
+
+        return total > 0;
+
+    }
 }

@@ -40,7 +40,11 @@ public class FormularioActivity extends ActionBarActivity{
 
         if(aluno != null){
             this.helper.colocaNoFormulario(aluno);
-            this.helper.carregaImagem(aluno.getCaminhoFoto());
+            //refatorar ..
+            if(aluno.getCaminhoFoto() != null){
+                this.helper.carregaImagem(aluno.getCaminhoFoto());
+            }
+
         }
 
 
