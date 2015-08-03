@@ -1,12 +1,14 @@
 package br.com.caelum.cadastro;
 
 
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import br.com.caelum.cadastro.br.com.caelum.cadastro.modelo.Prova;
 import br.com.caelum.cadastro.br.com.caelum.fragment.DetalhesProvaFragment;
 import br.com.caelum.cadastro.br.com.caelum.fragment.ListaProvasFragment;
 
@@ -54,5 +56,25 @@ public class ProvasActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void selecionaProva(Prova prova) {
+        FragmentManager fragmentManager = this.getSupportFragmentManager();
+
+        if(isTablet()){
+            DetalhesProvaFragment detalhesProva = (DetalhesProvaFragment) fragmentManager.findFragmentById(R.id.provas_detalhes);
+            detalhesProva.populaCamposComDados(prova);
+        }else{
+            Bundle arguments = new Bundle();
+            arguments.putSerializable("prova",prova);
+
+            DetalhesProvaFragment detalhesProva = new DetalhesProvaFragment();
+            detalhesProva.setArguments(arguments);
+
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.replace(R.id.provas_view, detalhesProva);
+            transaction.addToBackStack(null); //faz o android colocar a instrução em uma nova pilha
+            transaction.commit();
+        }
     }
 }
